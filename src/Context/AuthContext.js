@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  console.log(user);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,6 +15,7 @@ const AuthProvider = ({ children }) => {
         try {
           const userData = await getUser();
           setUser(userData);
+          console.log(userData,"userData");
         } catch (err) {
           console.error(err.message);
           // Handle error
