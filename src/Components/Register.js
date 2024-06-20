@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react';
 import { getUser, registerUser } from '../API/Api';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Context/AuthContext';
+import { Button, Container, Link, Paper, TextField, Typography } from '@mui/material';
+import  {NotificationManager } from 'react-notifications';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +17,7 @@ const Register = () => {
 
   const { username, email, password, image } = formData;
 
-  const onChange = (e) => {
+  const handleChange = (e) => {
     if (e.target.name === 'image') {
       setFormData({ ...formData, image: e.target.files[0] });
     } else {
@@ -25,7 +27,7 @@ const Register = () => {
 
   const { setUser } = useContext(AuthContext);
 
-  const handleRegister = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
   
     try {
@@ -47,48 +49,87 @@ const Register = () => {
           // image: URL.createObjectURL(image) 
         );
         console.log(image);
+        NotificationManager.success('User registered successfully!', 'Success');
         navigate(`/chat-dashboard/${id}`); // Redirect to ChatDashboard
       }
   
       console.log(response);
       return response;
     } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to register user';
+      NotificationManager.error(errorMessage, 'Error');
       throw new Error('Failed to register user');
     }
   };
   
 
   return (
-    <form onSubmit={handleRegister}>
-      <input
-        type="text"
-        name="username"
-        value={username}
-        onChange={onChange}
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        value={email}
-        onChange={onChange}
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        value={password}
-        onChange={onChange}
-        required
-      />
-      <input
-        type="file"
-        name="image"
-        onChange={onChange}
-        required
-      />
-      <button type="submit">Register</button>
-    </form>
+    <Container maxWidth="sm" sx={{ padding: 3, marginTop: 10 }}>
+        <Paper elevation={3} sx={{ padding: 3, marginTop: 4 }}>
+          <Typography variant="h4" align="center" gutterBottom>
+            Sign Up
+          </Typography>
+            <TextField
+              label="Name"
+              name="username"
+              type="text"
+              id="Name"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              required
+              value={formData.username}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Email"
+              name="email"
+              type="email"
+              id="Email"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              required
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Password"
+              name="password"
+              id="Password"
+              fullWidth
+              margin="normal"
+              type="password"
+              variant="outlined"
+              required
+              value={formData.password}
+              onChange={handleChange}
+            />
+             <TextField
+              fullWidth
+              type="file"
+              name="image"
+              margin="normal"
+              onChange={handleChange}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ marginTop: 2 }}
+              onClick={handleSignUp}
+            >
+              Sign Up
+            </Button>
+          <div style={{ marginLeft: 254, marginTop: 10 ,fontFamily:"system-ui",fontWeight:600,fontSize:17 }}>
+            Already have an Account?{" "}
+            <Link style={{ color: "blue" }} href="/login">
+              Login
+            </Link>
+          </div>
+        </Paper>
+      </Container>
   );
 };
 

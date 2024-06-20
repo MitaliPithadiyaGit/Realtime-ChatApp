@@ -6,17 +6,20 @@ import ProtectedRoute from './Context/ProtectedRoute';
 import Dashboard from './Components/Dashboard';
 import AuthProvider from './Context/AuthContext';
 import Chat from './Components/Chat';
-import "./index.css"
+// import "./index.css"
 import ChatDashboard from './Components/ChatDashboard';
+import { NotificationContainer } from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 
 const App = () => {
   return (
     <AuthProvider>
+      <NotificationContainer/>
       <BrowserRouter>
         <Routes>
           <Route path="/register" element={<Register/>} />
           <Route path="/login" element={<Login/>} />
-          <Route path="/chat-dashboard/:id" element={<ChatDashboard/>} />
+          {/* <Route path="/chat-dashboard/:id" element={<ChatDashboard/>} /> */}
           <Route 
             path="/dashboard" 
             element={
@@ -30,6 +33,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Chat />
+              </ProtectedRoute>
+            } 
+        />
+          <Route 
+            path="/chat-dashboard/:id" 
+            element={
+              <ProtectedRoute>
+                <ChatDashboard />
               </ProtectedRoute>
             } 
         />

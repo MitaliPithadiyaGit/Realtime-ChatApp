@@ -4,7 +4,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  Divider,
   TextField,
   Fab,
   makeStyles,
@@ -31,6 +30,19 @@ const useStyles = makeStyles({
   messageArea: {
     height: '70vh',
     overflowY: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '0.4em',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: 'transparent',
+    },
   },
   header: {
     display: 'flex',
@@ -43,15 +55,56 @@ const useStyles = makeStyles({
     marginRight: '10px',
   },
   timestamp: {
-    fontSize: '0.8rem',
+    fontSize: '12px',
     color: '#999',
+    fontFamily:"math",
+    display:"flex",
+    justifyContent:"flex-end",
+    marginTop:"17px",
+    marginLeft:"10px"
   },
-  timestampRight: {
-    textAlign: 'right',
+  messageBubbleSent: {
+    backgroundColor: '#dbdbdb',
+    borderRadius: '15px 0px 15px 15px',
+    padding: '10px',
+    maxWidth: 'max-content',
+    wordBreak: 'break-word',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: '5px',
+    position: 'relative',
   },
-  timestampLeft: {
-    textAlign: 'left',
+  messageBubbleReceived: {
+    backgroundColor: '#dbdbdb',
+    borderRadius: '15px 15px 15px 0px',
+    padding: '10px',
+    maxWidth: 'max-content',
+    wordBreak: 'break-word',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: '5px',
+    position: 'relative',
   },
+  messageContainer: {
+    display: 'flex',
+    marginBottom: '10px',
+  },
+  sentContainer: {
+    justifyContent: 'flex-end',
+  },
+  receivedContainer: {
+    justifyContent: 'flex-start',
+    marginLeft:"8px"
+  },
+  Username:{
+    fontFamily:"system-ui",
+    textTransform:"capitalize",
+    letterSpacing:'0.1rem'
+  }
 });
 
 const RightSide = ({ selectedUser, setSelectedUser }) => {
@@ -84,7 +137,6 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
           if (!response.data) {
             throw new Error('Failed to fetch messages');
           }
-
           setMessages(response.data);
         } catch (error) {
           console.error('Error fetching messages:', error);
@@ -106,7 +158,7 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
       ws.current.onmessage = (event) => {
         try {
           console.log('Message received from WebSocket:', event.data);
-          const { sender, message, timestamp } = JSON.parse(event.data);
+          const { sender, message,  } = JSON.parse(event.data);
           
           // Update timestamp to current server time
           const receivedTimestamp = new Date().toISOString();
@@ -189,7 +241,7 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
               src={`http://localhost:5000/${selectedUser?.image}`}
               className={classes.avatar}
             />
-            <h3>{selectedUser.username}</h3>
+            <h3 className={classes.Username}>{selectedUser.username}</h3>
           </div>
 
           <List className={classes.messageArea}>
@@ -202,22 +254,30 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
               </ListItem>
             ) : (
               messages.map((msg, index) => (
-                <React.Fragment key={index}>
-                  <ListItem>
-                    <ListItemText
-                      align={msg.sender === userId ? 'right' : 'left'}
-                      primary={msg.message}
+                <div
+                  className={`${classes.messageContainer} ${msg.sender === userId ? classes.sentContainer : classes.receivedContainer}`}
+                  key={index}
+                >
+                  <ListItem 
+                    className={msg.sender === userId ? classes.messageBubbleSent : classes.messageBubbleReceived}
+                  >
+                    <ListItemText 
+                      primary={
+                        <>
+                          {msg.message}
+                        </>
+                      }
                     />
+                    {/* Timestamp styling */}
+                    <span className={classes.timestamp}>
+                      {formatTime(msg.timestamp)}
+                    </span>
                   </ListItem>
-                  <div className={`${classes.timestamp} ${msg.sender === userId ? classes.timestampRight : classes.timestampLeft}`}>
-                    {formatTime(msg.timestamp)}
-                  </div>
-                </React.Fragment>
+                </div>
               ))
             )}
           </List>
 
-          <Divider />
           <Grid container style={{ padding: '20px' }}>
             <Grid item xs={11}>
               <TextField
@@ -233,7 +293,7 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
                 }}
               />
             </Grid>
-            <Grid xs={1} align="right">
+            <Grid item xs={1} align="right">
               <Fab color="primary" aria-label="send" onClick={sendMessage}>
                 <SendIcon />
               </Fab>

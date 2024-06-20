@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { Grid } from '@material-ui/core';
 import LeftSide from './LeftSide';
 import RightSide from './RightSide';
-import { AuthContext } from '../Context/AuthContext';
 import { useParams } from 'react-router-dom';
 
 const useStyles = makeStyles({

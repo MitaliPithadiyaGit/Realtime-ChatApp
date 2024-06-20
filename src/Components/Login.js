@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { getUser, loginUser } from '../API/Api';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Context/AuthContext';
+import { Button, Container, Link, Paper, TextField, Typography } from '@mui/material';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,10 +13,10 @@ const Login = () => {
 
   const { email, password } = formData;
   const { setUser } = useContext(AuthContext);
-  const onChange = (e) =>
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await loginUser(formData,setUser);
@@ -35,11 +36,55 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input type="email" name="email" value={email} onChange={onChange} required />
-      <input type="password" name="password" value={password} onChange={onChange} required />
-      <button type="submit">Login</button>
-    </form>
+    <Container maxWidth="sm" sx={{marginTop:25}}>
+    <Paper elevation={3} sx={{ padding: 3, marginTop: 4 }}>
+      <Typography variant="h4" align="center" gutterBottom>
+        Login
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="Email"
+          type="email"
+          name='email'
+          id="email"
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          required
+          value={email}
+          onChange={handleChange}
+        />
+        <TextField
+          label="Password"
+          type="password"
+          id="password"
+          name='password'
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          required
+          value={password}
+          onChange={handleChange}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ marginTop: 2 }}
+        >
+          Login
+        </Button>
+        <div style={{ marginLeft: 260, marginTop: 10,fontFamily:"system-ui",fontWeight:600,fontSize:17 }}>
+          Don't have an account?{' '}
+          <Link style={{ color: 'blue' }} href="/">
+            Signup
+          </Link>
+        </div>
+      </form>
+    </Paper>
+  </Container>
   );
 };
 
