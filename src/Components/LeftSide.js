@@ -41,15 +41,13 @@ const useStyles = makeStyles({
   },
 });
 
-const LeftSide = ({ user, setSelectedUser, selectedUser }) => {
+const LeftSide = ({ user, setSelectedUser, selectedUser ,setSelectedUsers,selectedUsers}) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState([]);
-  const [selectedUsers, setSelectedUsers] = useState([]);
   const [dialogSelectedUsers, setDialogSelectedUsers] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const { id: userId } = useParams();
-
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("token");
@@ -190,15 +188,27 @@ const LeftSide = ({ user, setSelectedUser, selectedUser }) => {
     user.username.toLowerCase().includes(searchInput.toLowerCase())
   );
 
-  console.log(selectedUsers, "selectedUsers");
-
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
+      return date.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+    } else if (date.getDate() === yesterday.getDate() && date.getMonth() === yesterday.getMonth() && date.getFullYear() === yesterday.getFullYear()) {
+      return 'Yesterday';
+    } else {
+      // Manually format the date as dd/mm/yyyy
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
   };
 
   return (

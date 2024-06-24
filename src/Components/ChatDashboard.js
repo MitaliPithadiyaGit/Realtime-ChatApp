@@ -32,6 +32,7 @@ const ChatDashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null); 
   const { id: userId } = useParams(); 
   const [user, setUser] = useState("");
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
   const fetchData = async () => {
       const token = localStorage.getItem('token');
@@ -80,8 +81,8 @@ const ChatDashboard = () => {
           </Grid>
       </Grid>
       <Grid container component={Paper} className={classes.chatSection}>
-        <LeftSide user={user} setSelectedUser={setSelectedUser} />
-        <RightSide selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
+        <LeftSide user={user} setSelectedUser={setSelectedUser} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers}/>
+        <RightSide selectedUser={selectedUser} setSelectedUser={setSelectedUser} setSelectedUsers={setSelectedUsers}/>
       </Grid>
     </div>
   );

@@ -104,10 +104,23 @@ const useStyles = makeStyles({
     fontFamily:"system-ui",
     textTransform:"capitalize",
     letterSpacing:'0.1rem'
+  },
+  DateMainDiv:{
+  display:"flex",
+  justifyContent:"center"
+  },
+  Date:{
+    padding:"5px",
+    borderRadius:"5px",
+    fontSize:'12px',
+    fontFamily:'monospace',
+    fontWeight:600,
+    backgroundColor:"#6f6f6f",
+    color:"white"
   }
 });
 
-const RightSide = ({ selectedUser, setSelectedUser }) => {
+const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
   const classes = useStyles();
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
@@ -158,12 +171,17 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
       ws.current.onmessage = (event) => {
         try {
           console.log('Message received from WebSocket:', event.data);
-          const { sender, message,  } = JSON.parse(event.data);
-          
-          // Update timestamp to current server time
+          const { sender, message, timestamp } = JSON.parse(event.data);
           const receivedTimestamp = new Date().toISOString();
-  
-          setMessages((prevMessages) => [...prevMessages, { sender, message, timestamp: receivedTimestamp }]);
+        
+          setMessages((prevMessages) => [...prevMessages, { sender, message, timestamp:receivedTimestamp }]);
+          setSelectedUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user._id === sender
+                ? { ...user, lastMessage: { sender, message, timestamp } }
+                : user
+            )
+          );
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
         }
@@ -190,14 +208,13 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
         ws.current.close();
       }
     };
-  }, [userId]); // Only depend on userId for WebSocket connection
-
+  }, [userId, setSelectedUsers,receiverId]);
+  
   const sendMessage = async () => {
     if (message.trim() && ws.current.readyState === WebSocket.OPEN) {
       try {
         const msg = { sender: userId, receiver: receiverId, message };
         const timestamp = new Date().toISOString();
-
         // Optimistically update the UI before sending the message to the server
         setMessages((prevMessages) => [...prevMessages, { sender: userId, message, timestamp }]);
         setMessage('');
@@ -212,6 +229,13 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
         if (!response.data) {
           throw new Error('Failed to send message');
         }
+        setSelectedUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user._id === receiverId
+              ? { ...user, lastMessage: { sender: userId, message, timestamp } }
+              : user
+          )
+        );
 
         console.log('Message sent via WebSocket:', msg);
         ws.current.send(JSON.stringify(msg));
@@ -230,7 +254,25 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
     });
   };
   
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
 
+    if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
+      return 'Today';
+    } else if (date.getDate() === yesterday.getDate() && date.getMonth() === yesterday.getMonth() && date.getFullYear() === yesterday.getFullYear()) {
+      return 'Yesterday';
+    } else {
+        // Manually format the date as dd MMM yyyy
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = date.toLocaleString('en-US', { month: 'short' });
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+  };
+  
   return (
     <Grid item xs={9}>
       {selectedUser ? (
@@ -244,7 +286,7 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
             <h3 className={classes.Username}>{selectedUser.username}</h3>
           </div>
 
-          <List className={classes.messageArea}>
+          <List className={classes.messageArea}>      
             {messages.length === 0 ? (
               <ListItem>
                 <ListItemText
@@ -254,6 +296,12 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
               </ListItem>
             ) : (
               messages.map((msg, index) => (
+                <>
+                <div className={`${classes.DateMainDiv}`}>
+                 {(index === 0 || formatDate(messages[index - 1].timestamp) !== formatDate(msg.timestamp)) && (
+                    <div className={`${classes.Date}`}>{formatDate(msg.timestamp)}</div>
+                  )}
+                  </div>
                 <div
                   className={`${classes.messageContainer} ${msg.sender === userId ? classes.sentContainer : classes.receivedContainer}`}
                   key={index}
@@ -274,6 +322,7 @@ const RightSide = ({ selectedUser, setSelectedUser }) => {
                     </span>
                   </ListItem>
                 </div>
+                </>
               ))
             )}
           </List>
