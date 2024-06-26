@@ -10,7 +10,8 @@ const ChatDashboard = () => {
   const { id: userId } = useParams();
   const [user, setUser] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
-
+  
+  const apiUrl = process.env.REACT_APP_API_URL
   const fetchData = async () => {
     const token = localStorage.getItem("token");
 
@@ -20,7 +21,7 @@ const ChatDashboard = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/user/${userId}`, {
+      const response = await fetch(`${apiUrl}/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

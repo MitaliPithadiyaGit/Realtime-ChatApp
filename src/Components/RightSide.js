@@ -27,13 +27,13 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
       setSelectedUser(JSON.parse(savedUser));
     }
   }, [setSelectedUser]);
-
+  const apiUrl = process.env.REACT_APP_API_URL
   useEffect(() => {
     if (receiverId && userId) {
       const fetchMessages = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/getmessages`,
+            `${apiUrl}/getmessages`,
             {
               params: { sender: userId, receiver: receiverId },
               headers: {
@@ -57,7 +57,7 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
 
   useEffect(() => {
     const connectWebSocket = () => {
-      ws.current = new WebSocket(`ws://localhost:5000?userId=${userId}`);
+      ws.current = new WebSocket(`ws://realtime-chatapp-backend.vercel.app?userId=${userId}`);
 
       ws.current.onopen = () => {
         console.log("WebSocket connected");
@@ -121,7 +121,7 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
         setMessage("");
 
         const response = await axios.post(
-          "http://localhost:5000/messages",
+          `${apiUrl}/messages`,
           { ...msg, timestamp },
           {
             headers: {
@@ -193,7 +193,7 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
           <div className="header">
             <Avatar
               alt={selectedUser.username}
-              src={`http://localhost:5000/${selectedUser?.image}`}
+              src={`${apiUrl}/${selectedUser?.image}`}
               className="avatar"
             />
             <h3 className="Username">{selectedUser.username}</h3>
