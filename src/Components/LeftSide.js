@@ -1,48 +1,33 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
+  Avatar,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
   Grid,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Avatar,
-  Divider,
   TextField,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  Checkbox,
-  makeStyles,
-} from "@material-ui/core";
-import { MoreVert } from "@material-ui/icons";
-import { useParams } from "react-router-dom";
+} from "@mui/material";
+import MoreVert from "@mui/icons-material/MoreVert";
+import "./LeftSide.css";
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-  chatSection: {
-    width: "100%",
-    height: "80vh",
-  },
-  headBG: {
-    backgroundColor: "#e0e0e0",
-  },
-  borderRight500: {
-    borderRight: "1px solid #e0e0e0",
-  },
-  messageArea: {
-    height: "70vh",
-    overflowY: "auto",
-  },
-});
-
-const LeftSide = ({ user, setSelectedUser, selectedUser ,setSelectedUsers,selectedUsers}) => {
-  const classes = useStyles();
+const LeftSide = ({
+  user,
+  setSelectedUser,
+  selectedUser,
+  setSelectedUsers,
+  selectedUsers,
+}) => {
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const [dialogSelectedUsers, setDialogSelectedUsers] = useState([]);
@@ -194,25 +179,33 @@ const LeftSide = ({ user, setSelectedUser, selectedUser ,setSelectedUsers,select
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
-    if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
+    if (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    ) {
       return date.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
+        hour: "2-digit",
+        minute: "2-digit",
         hour12: true,
       });
-    } else if (date.getDate() === yesterday.getDate() && date.getMonth() === yesterday.getMonth() && date.getFullYear() === yesterday.getFullYear()) {
-      return 'Yesterday';
+    } else if (
+      date.getDate() === yesterday.getDate() &&
+      date.getMonth() === yesterday.getMonth() &&
+      date.getFullYear() === yesterday.getFullYear()
+    ) {
+      return "Yesterday";
     } else {
       // Manually format the date as dd/mm/yyyy
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
       const year = date.getFullYear();
       return `${day}/${month}/${year}`;
     }
   };
 
   return (
-    <Grid item xs={3} className={classes.borderRight500}>
+    <Grid item xs={3} className="borderRight500">
       <List>
         <ListItem button key={user?.username}>
           <ListItemIcon>

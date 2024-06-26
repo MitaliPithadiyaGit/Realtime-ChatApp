@@ -1,0 +1,91 @@
+.messageArea {
+  height: 70vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+}
+
+.avatar {
+  margin-right: 10px;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #999;
+  font-family: math;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 17px;
+  margin-left: 10px;
+}
+
+.messageBubbleSent {
+  background-color: #dbdbdb;
+  border-radius: 15px 0px 15px 15px;
+  padding: 10px;
+  max-width: max-content;
+  word-break: break-word;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 5px;
+  position: relative;
+}
+
+.messageBubbleReceived {
+  background-color: #dbdbdb;
+  border-radius: 15px 15px 15px 0px;
+  padding: 10px;
+  max-width: max-content;
+  word-break: break-word;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 5px;
+  position: relative;
+}
+
+.messageContainer {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.sentContainer {
+  justify-content: flex-end;
+}
+
+.receivedContainer {
+  justify-content: flex-start;
+  margin-left: 8px;
+}
+
+.Username {
+  font-family: system-ui;
+  text-transform: capitalize;
+  letter-spacing: 0.1rem;
+}
+
+.DateMainDiv {
+  display: flex;
+  justify-content: center;
+}
+
+.Date {
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-family: monospace;
+  font-weight: 600;
+  background-color: #6f6f6f;
+  color: white;
+}

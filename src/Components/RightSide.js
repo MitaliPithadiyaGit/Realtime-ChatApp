@@ -1,136 +1,28 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 import {
+  Avatar,
+  Fab,
   Grid,
   List,
   ListItem,
   ListItemText,
   TextField,
-  Fab,
-  makeStyles,
-  Avatar,
-} from '@material-ui/core';
-import SendIcon from '@material-ui/icons/Send';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
+} from "@mui/material";
+import "./RightSide.css";
+import SendIcon from "@mui/icons-material/Send";
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-  chatSection: {
-    width: '100%',
-    height: '80vh',
-  },
-  headBG: {
-    backgroundColor: '#e0e0e0',
-  },
-  borderRight500: {
-    borderRight: '1px solid #e0e0e0',
-  },
-  messageArea: {
-    height: '70vh',
-    overflowY: 'auto',
-    '&::-webkit-scrollbar': {
-      width: '0.4em',
-    },
-    '&::-webkit-scrollbar-thumb': {
-      backgroundColor: 'rgba(0, 0, 0, 0.1)',
-      borderRadius: '10px',
-    },
-    '&::-webkit-scrollbar-thumb:hover': {
-      backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    },
-    '&::-webkit-scrollbar-track': {
-      background: 'transparent',
-    },
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '10px',
-    backgroundColor: '#f0f0f0',
-    borderBottom: '1px solid #ccc',
-  },
-  avatar: {
-    marginRight: '10px',
-  },
-  timestamp: {
-    fontSize: '12px',
-    color: '#999',
-    fontFamily:"math",
-    display:"flex",
-    justifyContent:"flex-end",
-    marginTop:"17px",
-    marginLeft:"10px"
-  },
-  messageBubbleSent: {
-    backgroundColor: '#dbdbdb',
-    borderRadius: '15px 0px 15px 15px',
-    padding: '10px',
-    maxWidth: 'max-content',
-    wordBreak: 'break-word',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    margin: '5px',
-    position: 'relative',
-  },
-  messageBubbleReceived: {
-    backgroundColor: '#dbdbdb',
-    borderRadius: '15px 15px 15px 0px',
-    padding: '10px',
-    maxWidth: 'max-content',
-    wordBreak: 'break-word',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    margin: '5px',
-    position: 'relative',
-  },
-  messageContainer: {
-    display: 'flex',
-    marginBottom: '10px',
-  },
-  sentContainer: {
-    justifyContent: 'flex-end',
-  },
-  receivedContainer: {
-    justifyContent: 'flex-start',
-    marginLeft:"8px"
-  },
-  Username:{
-    fontFamily:"system-ui",
-    textTransform:"capitalize",
-    letterSpacing:'0.1rem'
-  },
-  DateMainDiv:{
-  display:"flex",
-  justifyContent:"center"
-  },
-  Date:{
-    padding:"5px",
-    borderRadius:"5px",
-    fontSize:'12px',
-    fontFamily:'monospace',
-    fontWeight:600,
-    backgroundColor:"#6f6f6f",
-    color:"white"
-  }
-});
-
-const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
-  const classes = useStyles();
+const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
   const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const ws = useRef(null);
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   const { id: userId } = useParams();
   const receiverId = selectedUser ? selectedUser._id : null;
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('selectedUser');
+    const savedUser = localStorage.getItem("selectedUser");
     if (savedUser) {
       setSelectedUser(JSON.parse(savedUser));
     }
@@ -140,19 +32,22 @@ const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
     if (receiverId && userId) {
       const fetchMessages = async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/getmessages`, {
-            params: { sender: userId, receiver: receiverId },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const response = await axios.get(
+            `http://localhost:5000/getmessages`,
+            {
+              params: { sender: userId, receiver: receiverId },
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
 
           if (!response.data) {
-            throw new Error('Failed to fetch messages');
+            throw new Error("Failed to fetch messages");
           }
           setMessages(response.data);
         } catch (error) {
-          console.error('Error fetching messages:', error);
+          console.error("Error fetching messages:", error);
         }
       };
 
@@ -165,16 +60,19 @@ const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
       ws.current = new WebSocket(`ws://localhost:5000?userId=${userId}`);
 
       ws.current.onopen = () => {
-        console.log('WebSocket connected');
+        console.log("WebSocket connected");
       };
 
       ws.current.onmessage = (event) => {
         try {
-          console.log('Message received from WebSocket:', event.data);
+          console.log("Message received from WebSocket:", event.data);
           const { sender, message, timestamp } = JSON.parse(event.data);
           const receivedTimestamp = new Date().toISOString();
-        
-          setMessages((prevMessages) => [...prevMessages, { sender, message, timestamp:receivedTimestamp }]);
+
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { sender, message, timestamp: receivedTimestamp },
+          ]);
           setSelectedUsers((prevUsers) =>
             prevUsers.map((user) =>
               user._id === sender
@@ -183,18 +81,18 @@ const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
             )
           );
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
+          console.error("Error parsing WebSocket message:", error);
         }
       };
 
       ws.current.onclose = () => {
-        console.log('WebSocket disconnected');
+        console.log("WebSocket disconnected");
         // Attempt to reconnect WebSocket here if needed
         connectWebSocket(); // Example: immediate attempt to reconnect
       };
 
       ws.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        console.error("WebSocket error:", error);
         // Handle WebSocket errors here
       };
     };
@@ -208,26 +106,33 @@ const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
         ws.current.close();
       }
     };
-  }, [userId, setSelectedUsers,receiverId]);
-  
+  }, [userId, setSelectedUsers, receiverId]);
+
   const sendMessage = async () => {
     if (message.trim() && ws.current.readyState === WebSocket.OPEN) {
       try {
         const msg = { sender: userId, receiver: receiverId, message };
         const timestamp = new Date().toISOString();
         // Optimistically update the UI before sending the message to the server
-        setMessages((prevMessages) => [...prevMessages, { sender: userId, message, timestamp }]);
-        setMessage('');
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: userId, message, timestamp },
+        ]);
+        setMessage("");
 
-        const response = await axios.post('http://localhost:5000/messages', { ...msg, timestamp }, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.post(
+          "http://localhost:5000/messages",
+          { ...msg, timestamp },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.data) {
-          throw new Error('Failed to send message');
+          throw new Error("Failed to send message");
         }
         setSelectedUsers((prevUsers) =>
           prevUsers.map((user) =>
@@ -237,10 +142,10 @@ const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
           )
         );
 
-        console.log('Message sent via WebSocket:', msg);
+        console.log("Message sent via WebSocket:", msg);
         ws.current.send(JSON.stringify(msg));
       } catch (error) {
-        console.error('Error sending message:', error);
+        console.error("Error sending message:", error);
       }
     }
   };
@@ -248,45 +153,53 @@ const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
+      hour: "2-digit",
+      minute: "2-digit",
       hour12: true,
     });
   };
-  
+
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
-    if (date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()) {
-      return 'Today';
-    } else if (date.getDate() === yesterday.getDate() && date.getMonth() === yesterday.getMonth() && date.getFullYear() === yesterday.getFullYear()) {
-      return 'Yesterday';
+    if (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    ) {
+      return "Today";
+    } else if (
+      date.getDate() === yesterday.getDate() &&
+      date.getMonth() === yesterday.getMonth() &&
+      date.getFullYear() === yesterday.getFullYear()
+    ) {
+      return "Yesterday";
     } else {
-        // Manually format the date as dd MMM yyyy
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = date.toLocaleString('en-US', { month: 'short' });
-        const year = date.getFullYear();
-        return `${day} ${month} ${year}`;
+      // Manually format the date as dd MMM yyyy
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = date.toLocaleString("en-US", { month: "short" });
+      const year = date.getFullYear();
+      return `${day} ${month} ${year}`;
     }
   };
-  
+
   return (
     <Grid item xs={9}>
       {selectedUser ? (
         <div>
-          <div className={classes.header}>
+          <div className="header">
             <Avatar
               alt={selectedUser.username}
               src={`http://localhost:5000/${selectedUser?.image}`}
-              className={classes.avatar}
+              className="avatar"
             />
-            <h3 className={classes.Username}>{selectedUser.username}</h3>
+            <h3 className="Username">{selectedUser.username}</h3>
           </div>
 
-          <List className={classes.messageArea}>      
+          <List className="messageArea">
             {messages.length === 0 ? (
               <ListItem>
                 <ListItemText
@@ -297,37 +210,41 @@ const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
             ) : (
               messages.map((msg, index) => (
                 <>
-                <div className={`${classes.DateMainDiv}`}>
-                 {(index === 0 || formatDate(messages[index - 1].timestamp) !== formatDate(msg.timestamp)) && (
-                    <div className={`${classes.Date}`}>{formatDate(msg.timestamp)}</div>
-                  )}
+                  <div className="DateMainDiv">
+                    {(index === 0 ||
+                      formatDate(messages[index - 1].timestamp) !==
+                        formatDate(msg.timestamp)) && (
+                      <div className="Date">{formatDate(msg.timestamp)}</div>
+                    )}
                   </div>
-                <div
-                  className={`${classes.messageContainer} ${msg.sender === userId ? classes.sentContainer : classes.receivedContainer}`}
-                  key={index}
-                >
-                  <ListItem 
-                    className={msg.sender === userId ? classes.messageBubbleSent : classes.messageBubbleReceived}
+                  <div
+                    className={`messageContainer ${
+                      msg.sender === userId
+                        ? "sentContainer"
+                        : "receivedContainer"
+                    }`}
+                    key={index}
                   >
-                    <ListItemText 
-                      primary={
-                        <>
-                          {msg.message}
-                        </>
+                    <ListItem
+                      className={
+                        msg.sender === userId
+                          ? "messageBubbleSent"
+                          : "messageBubbleReceived"
                       }
-                    />
-                    {/* Timestamp styling */}
-                    <span className={classes.timestamp}>
-                      {formatTime(msg.timestamp)}
-                    </span>
-                  </ListItem>
-                </div>
+                    >
+                      <ListItemText primary={<>{msg.message}</>} />
+                      {/* Timestamp styling */}
+                      <span className="timestamp">
+                        {formatTime(msg.timestamp)}
+                      </span>
+                    </ListItem>
+                  </div>
                 </>
               ))
             )}
           </List>
 
-          <Grid container style={{ padding: '20px' }}>
+          <Grid container style={{ padding: "20px" }}>
             <Grid item xs={11}>
               <TextField
                 id="outlined-basic-email"
@@ -336,7 +253,7 @@ const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === "Enter") {
                     sendMessage();
                   }
                 }}
@@ -350,7 +267,7 @@ const RightSide = ({ selectedUser, setSelectedUser ,setSelectedUsers}) => {
           </Grid>
         </div>
       ) : (
-        <div style={{ textAlign: 'center', paddingTop: '20%' }}>
+        <div style={{ textAlign: "center", paddingTop: "20%" }}>
           <h2>Select a user to start chatting</h2>
         </div>
       )}
