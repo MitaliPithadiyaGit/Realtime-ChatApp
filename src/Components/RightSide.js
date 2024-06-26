@@ -27,13 +27,13 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
       setSelectedUser(JSON.parse(savedUser));
     }
   }, [setSelectedUser]);
-  const apiUrl = process.env.REACT_APP_API_URL
+
   useEffect(() => {
     if (receiverId && userId) {
       const fetchMessages = async () => {
         try {
           const response = await axios.get(
-            `${apiUrl}/getmessages`,
+            "http://localhost:5000/getmessages",
             {
               params: { sender: userId, receiver: receiverId },
               headers: {
@@ -121,7 +121,7 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
         setMessage("");
 
         const response = await axios.post(
-          `${apiUrl}/messages`,
+          "http://localhost:5000/messages",
           { ...msg, timestamp },
           {
             headers: {
@@ -193,7 +193,7 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
           <div className="header">
             <Avatar
               alt={selectedUser.username}
-              src={`${apiUrl}/${selectedUser?.image}`}
+              src={`http://localhost:5000/${selectedUser?.image}`}
               className="avatar"
             />
             <h3 className="Username">{selectedUser.username}</h3>

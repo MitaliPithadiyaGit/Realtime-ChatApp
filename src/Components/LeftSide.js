@@ -33,7 +33,7 @@ const LeftSide = ({
   const [dialogSelectedUsers, setDialogSelectedUsers] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const { id: userId } = useParams();
-  const apiUrl = process.env.REACT_APP_API_URL
+
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("token");
@@ -44,7 +44,7 @@ const LeftSide = ({
 
       try {
         // Fetch all users except the logged-in user
-        const usersResponse = await fetch(`${apiUrl}/users`, {
+        const usersResponse = await fetch("http://localhost:5000/users", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -60,7 +60,7 @@ const LeftSide = ({
 
         // Fetch selected users and their last messages
         const selectedUsersResponse = await fetch(
-          `${apiUrl}/getselectedusers`,
+          "http://localhost:5000/getselectedusers",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -78,7 +78,7 @@ const LeftSide = ({
         const usersWithLastMessages = await Promise.all(
           selectedUsers.map(async (user) => {
             const lastMessageResponse = await fetch(
-              `${apiUrl}/getlastmessage?sender=${userId}&receiver=${user._id}`,
+              `http://localhost:5000/getlastmessage?sender=${userId}&receiver=${user._id}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ const LeftSide = ({
     }
 
     try {
-      await fetch(`${apiUrl}/selected-users`, {
+      await fetch(`http://localhost:5000/selected-users`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -211,7 +211,7 @@ const LeftSide = ({
           <ListItemIcon>
             <Avatar
               alt={user?.username}
-              src={`${apiUrl}/${user.image}`}
+              src={`http://localhost:5000/${user.image}`}
             />
           </ListItemIcon>
           <ListItemText
@@ -283,7 +283,7 @@ const LeftSide = ({
                 <ListItemIcon>
                   <Avatar
                     alt={user.username}
-                    src={`${apiUrl}/${user.image}`}
+                    src={`http://localhost:5000/${user.image}`}
                   />
                 </ListItemIcon>
                 <ListItemText
@@ -348,7 +348,7 @@ const LeftSide = ({
                 <ListItemIcon>
                   <Avatar
                     alt={user.username}
-                    src={`${apiUrl}/${user.image}`}
+                    src={`http://localhost:5000/${user.image}`}
                   />
                 </ListItemIcon>
                 <ListItemText primary={user.username} />

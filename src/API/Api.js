@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-// const API_URL = process.env.NODE_ENV === 'production' ? 'https://realtime-chatapp-backend.vercel.app':'http://localhost:5000' ;
 const API_URL = 'http://localhost:5000' ;
-const apiUrl = process.env.REACT_APP_API_URL
 export const registerUser = async (userData) => {
     try {
-      const response = await axios.post(`${apiUrl}/register`, userData);
+      const response = await axios.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (error) {
       throw new Error('Failed to register user');
@@ -14,7 +12,7 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (userData) => {
   try {
-    const response = await axios.post(`${apiUrl}/login`, userData);
+    const response = await axios.post(`${API_URL}/login`, userData);
     // if (response.data.token) {
     //   localStorage.setItem('token', response.data.token);
     //   const userData = await getUser();
@@ -33,7 +31,7 @@ export const getUser = async () => {
   }
 
   try {
-    const response = await axios.get(`${apiUrl}/users`, {
+    const response = await axios.get(`${API_URL}/users`, {
       headers: {
         Authorization: `Bearer ${token}`, // Set token in Authorization header
       },
@@ -51,7 +49,7 @@ export const getUserById = async (id) => {
   }
 
   try {
-    const response = await axios.get(`${apiUrl}/user/${id}`, {
+    const response = await axios.get(`${API_URL}/user/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`, // Set token in Authorization header
       },
