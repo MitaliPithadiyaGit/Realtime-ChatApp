@@ -2,13 +2,19 @@ import axios from 'axios';
 
 const API_URL = 'https://realtime-chta-app-backend.vercel.app' ;
 export const registerUser = async (userData) => {
-    try {
-      const response = await axios.post(`${API_URL}/register`, userData);
+  try {
+      const response = await axios.post(`${API_URL}/register`, userData, {
+          headers: {
+              'Content-Type': 'multipart/form-data'
+          }
+      });
+      console.log('Request Data:', userData);
+      console.log('Response:', response.data);
       return response.data;
-    } catch (error) {
+  } catch (error) {
       throw new Error('Failed to register user');
-    }
-  };
+  }
+};
 
 export const loginUser = async (userData) => {
   try {
