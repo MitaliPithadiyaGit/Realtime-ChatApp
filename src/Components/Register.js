@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { NotificationManager } from "react-notifications";
+import axios from "axios";
 
 const Register = () => {
   const [formData, setFormData] = useState({
