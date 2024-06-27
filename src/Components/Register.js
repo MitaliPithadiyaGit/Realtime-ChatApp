@@ -99,27 +99,24 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await axios.post('https://realtime-chta-app-backend.vercel.app/register', formData);
       if (response.data.token && response.data.id) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userId", response.data.id);
-        
         const id = response.data.id;
-        // Redirect to chat dashboard
-        window.location.href = `/chat-dashboard/${id}`; // Use window.location.href for redirection
-        
-        NotificationManager.success("User registered successfully!", "Success");
-        console.log('Registration successful:', response.data);
-      } else {
-        // Handle case where response does not contain expected data
-        console.error('Invalid response format from server');
-        NotificationManager.error("Failed to register user", "Error");
+        const userData = await getUser();
+        setUser(userData);
+        window.location.href = `/chat-dashboard/${id}`;
+        navigate(`/chat-dashboard/${id}`);
       }
+      NotificationManager.success("User registered successfully!", "Success");
+      console.log('Registration successful:', response.data);
+      // Handle success logic here (e.g., redirect user)
     } catch (error) {
       console.error('Registration error:', error.message);
-      NotificationManager.error("Failed to register user", "Error");
+      // Handle error (e.g., show error message to user)
     }
   };
   
