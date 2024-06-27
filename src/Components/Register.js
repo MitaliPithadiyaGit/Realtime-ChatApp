@@ -50,7 +50,6 @@ const Register = () => {
           userData
           // image: URL.createObjectURL(image)
         );
-        console.log(image);
         NotificationManager.success("User registered successfully!", "Success");
         navigate(`/chat-dashboard/${id}`); // Redirect to ChatDashboard
       }
