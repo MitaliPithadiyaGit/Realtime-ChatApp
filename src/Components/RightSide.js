@@ -55,11 +55,11 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
     }
   }, [receiverId, token, userId]);
 
-  useEffect(() => {
+useEffect(() => {
     const connectWebSocket = () => {
-      const wsUrl = process.env.NODE_ENV === 'production' 
-        ? `wss://realtime-chatapp-backend.vercel.app?userId=${userId}` 
-        : `ws://localhost:5000?userId=${userId}`;
+      const wsUrl =
+         `wss://realtime-chatapp-backend.vercel.app?userId=${userId}` 
+        
 
       ws.current = new WebSocket(wsUrl);
       let retryCount = 0;
@@ -116,7 +116,7 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
   }, [userId, setSelectedUsers, receiverId]);
 
   const sendMessage = async () => {
-    if (message.trim() && ws.current.readyState === WebSocket.OPEN) {
+    if (message.trim() && ws.current && ws.current.readyState === WebSocket.OPEN) {
       try {
         const msg = { sender: userId, receiver: receiverId, message };
         const timestamp = new Date().toISOString();

@@ -108,9 +108,7 @@ const Register = () => {
         const userData = await getUser();
         setUser(userData);
       }
-      const id = response.data.id;
-      navigate(`/chat-dashboard/${id}`);
-      window.location.href = `/chat-dashboard/${id}`;
+      navigate("/login");
       NotificationManager.success("User registered successfully!", "Success");
       console.log('Registration successful:', response.data);
       // Handle success logic here (e.g., redirect user)
