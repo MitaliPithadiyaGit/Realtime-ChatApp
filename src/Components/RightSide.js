@@ -57,10 +57,16 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
 
   useEffect(() => {
     const connectWebSocket = () => {
-      ws.current = new WebSocket(`ws://realtime-chatapp-backend.vercel.app?userId=${userId}`);
+      const wsUrl = process.env.NODE_ENV === 'production' 
+        ? `wss://realtime-chatapp-backend.vercel.app?userId=${userId}` 
+        : `ws://localhost:5000?userId=${userId}`;
+
+      ws.current = new WebSocket(wsUrl);
+      let retryCount = 0;
 
       ws.current.onopen = () => {
         console.log("WebSocket connected");
+        retryCount = 0; // Reset the retry count on successful connection
       };
 
       ws.current.onmessage = (event) => {
@@ -73,6 +79,7 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
             ...prevMessages,
             { sender, message, timestamp: receivedTimestamp },
           ]);
+
           setSelectedUsers((prevUsers) =>
             prevUsers.map((user) =>
               user._id === sender
@@ -87,13 +94,13 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
 
       ws.current.onclose = () => {
         console.log("WebSocket disconnected");
-        // Attempt to reconnect WebSocket here if needed
-        connectWebSocket(); // Example: immediate attempt to reconnect
+        const retryInterval = Math.min(10000, 1000 * Math.pow(2, retryCount));
+        setTimeout(connectWebSocket, retryInterval);
+        retryCount += 1;
       };
 
       ws.current.onerror = (error) => {
         console.error("WebSocket error:", error);
-        // Handle WebSocket errors here
       };
     };
 
