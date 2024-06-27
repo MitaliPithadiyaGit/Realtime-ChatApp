@@ -92,7 +92,6 @@ const Register = () => {
         }
       } 
     } catch (error) {
-      console.error('Error during signup:', error.message, error.response?.data);
       NotificationManager.error('Error during sign up', 'Error');
     }
   };
