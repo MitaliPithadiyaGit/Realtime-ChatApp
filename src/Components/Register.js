@@ -102,16 +102,16 @@ const Register = () => {
 
     try {
       const response = await axios.post('https://realtime-chta-app-backend.vercel.app/register', formData);
-      console.log('Registration successful:', response.data);
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userId", response.data.id);
         const id = response.data.id;
         const userData = await getUser();
         setUser(userData);
-        NotificationManager.success("User registered successfully!", "Success");
         navigate(`/chat-dashboard/${id}`);
       }
+      NotificationManager.success("User registered successfully!", "Success");
+      console.log('Registration successful:', response.data);
       // Handle success logic here (e.g., redirect user)
     } catch (error) {
       console.error('Registration error:', error.message);
