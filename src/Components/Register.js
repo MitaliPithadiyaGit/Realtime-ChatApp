@@ -72,6 +72,8 @@ const Register = () => {
       formDataForUpload.append('email', formData.email);
       formDataForUpload.append('password', formData.password);
   
+      console.log('FormData:', formDataForUpload.get('username'), formDataForUpload.get('email'), formDataForUpload.get('password'));
+  
       const response = await axios.post('https://realtime-chta-app-backend.vercel.app/register', formDataForUpload);
   
       if (response.status === 200) {
@@ -79,26 +81,21 @@ const Register = () => {
         if (response.data.token) {
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("userId", response.data.id);
-          // Store user ID in localStorage
           const id = response.data.id;
           const userData = await getUser();
-          setUser(
-            userData
-            // image: URL.createObjectURL(image)
-          );
-        NotificationManager.success("User registered successfully!", "Success");
-        navigate(`/chat-dashboard/${id}`);
-      } else {
-        console.error('Signup Failed:', response.data);
-        NotificationManager.error('Sign Up Failed', 'Error');
-      }
-    } 
-  }
-    catch (error) {
+          setUser(userData);
+          NotificationManager.success("User registered successfully!", "Success");
+          navigate(`/chat-dashboard/${id}`);
+        } else {
+          console.error('Signup Failed:', response.data);
+          NotificationManager.error('Sign Up Failed', 'Error');
+        }
+      } 
+    } catch (error) {
       console.error('Error during signup:', error.message, error.response?.data);
       NotificationManager.error('Error during sign up', 'Error');
-  }
-}
+    }
+  };
   
   
 
