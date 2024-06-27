@@ -72,7 +72,7 @@ const Register = () => {
       formDataForUpload.append('email', formData.email);
       formDataForUpload.append('password', formData.password);
   
-      const response = await axios.post('https://realtime-chta-app-backend.vercel.app', formDataForUpload);
+      const response = await axios.post('https://realtime-chta-app-backend.vercel.app/register', formDataForUpload);
   
       if (response.status === 200) {
         console.log('SignUp Successful:', response.data);
