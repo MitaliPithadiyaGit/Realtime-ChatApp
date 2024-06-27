@@ -65,34 +65,57 @@ const Register = () => {
   //   }
   // };
 
-  const handleSignUp = async () => {
+  // const handleSignUp = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const formDataForUpload = new FormData();
+  //     formDataForUpload.append('username', formData.username);
+  //     formDataForUpload.append('email', formData.email);
+  //     formDataForUpload.append('password', formData.password);
+  
+  //     console.log('FormData:', formDataForUpload.get('username'), formDataForUpload.get('email'), formDataForUpload.get('password'));
+  
+  //     const response = await axios.post('https://realtime-chta-app-backend.vercel.app/register', formDataForUpload);
+  
+  //     if (response.status === 200) {
+  //       console.log('SignUp Successful:', response.data);
+  //       if (response.data.token) {
+  //         localStorage.setItem("token", response.data.token);
+  //         localStorage.setItem("userId", response.data.id);
+  //         const id = response.data.id;
+  //         const userData = await getUser();
+  //         setUser(userData);
+  //         NotificationManager.success("User registered successfully!", "Success");
+  //         navigate(`/chat-dashboard/${id}`);
+  //       } else {
+  //         console.error('Signup Failed:', response.data);
+  //         NotificationManager.error('Sign Up Failed', 'Error');
+  //       }
+  //     } 
+  //   } catch (error) {
+  //     NotificationManager.error('Error during sign up', 'Error');
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     try {
-      const formDataForUpload = new FormData();
-      formDataForUpload.append('username', formData.username);
-      formDataForUpload.append('email', formData.email);
-      formDataForUpload.append('password', formData.password);
-  
-      console.log('FormData:', formDataForUpload.get('username'), formDataForUpload.get('email'), formDataForUpload.get('password'));
-  
-      const response = await axios.post('https://realtime-chta-app-backend.vercel.app/register', formDataForUpload);
-  
-      if (response.status === 200) {
-        console.log('SignUp Successful:', response.data);
-        if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("userId", response.data.id);
-          const id = response.data.id;
-          const userData = await getUser();
-          setUser(userData);
-          NotificationManager.success("User registered successfully!", "Success");
-          navigate(`/chat-dashboard/${id}`);
-        } else {
-          console.error('Signup Failed:', response.data);
-          NotificationManager.error('Sign Up Failed', 'Error');
-        }
-      } 
+      const response = await axios.post('https://realtime-chta-app-backend.vercel.app/register', formData);
+      console.log('Registration successful:', response.data);
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userId", response.data.id);
+        const id = response.data.id;
+        const userData = await getUser();
+        setUser(userData);
+        NotificationManager.success("User registered successfully!", "Success");
+        navigate(`/chat-dashboard/${id}`);
+      }
+      // Handle success logic here (e.g., redirect user)
     } catch (error) {
-      NotificationManager.error('Error during sign up', 'Error');
+      console.error('Registration error:', error.message);
+      // Handle error (e.g., show error message to user)
     }
   };
   
@@ -146,7 +169,7 @@ const Register = () => {
           color="primary"
           fullWidth
           sx={{ marginTop: 2 }}
-          onClick={handleSignUp}
+          onClick={handleSubmit}
         >
           Sign Up
         </Button>
