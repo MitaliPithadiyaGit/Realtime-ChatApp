@@ -33,7 +33,7 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
       const fetchMessages = async () => {
         try {
           const response = await axios.get(
-            "http://localhost:5000/getmessages",
+            "https://realtime-chta-app-backend.vercel.app/getmessages",
             {
               params: { sender: userId, receiver: receiverId },
               headers: {
@@ -121,7 +121,7 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
         setMessage("");
 
         const response = await axios.post(
-          "http://localhost:5000/messages",
+          "https://realtime-chta-app-backend.vercel.app/messages",
           { ...msg, timestamp },
           {
             headers: {
@@ -193,7 +193,7 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
           <div className="header">
             <Avatar
               alt={selectedUser.username}
-              src={`http://localhost:5000/${selectedUser?.image}`}
+              src={`https://realtime-chta-app-backend.vercel.app/${selectedUser?.image}`}
               className="avatar"
             />
             <h3 className="Username">{selectedUser.username}</h3>

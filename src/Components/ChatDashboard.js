@@ -20,7 +20,7 @@ const ChatDashboard = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/user/${userId}`, {
+      const response = await fetch(`https://realtime-chta-app-backend.vercel.app/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

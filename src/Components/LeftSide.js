@@ -44,7 +44,7 @@ const LeftSide = ({
 
       try {
         // Fetch all users except the logged-in user
-        const usersResponse = await fetch("http://localhost:5000/users", {
+        const usersResponse = await fetch("https://realtime-chta-app-backend.vercel.app/users", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -60,7 +60,7 @@ const LeftSide = ({
 
         // Fetch selected users and their last messages
         const selectedUsersResponse = await fetch(
-          "http://localhost:5000/getselectedusers",
+          "https://realtime-chta-app-backend.vercel.app/getselectedusers",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -78,7 +78,7 @@ const LeftSide = ({
         const usersWithLastMessages = await Promise.all(
           selectedUsers.map(async (user) => {
             const lastMessageResponse = await fetch(
-              `http://localhost:5000/getlastmessage?sender=${userId}&receiver=${user._id}`,
+              `https://realtime-chta-app-backend.vercel.app/getlastmessage?sender=${userId}&receiver=${user._id}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ const LeftSide = ({
     }
 
     try {
-      await fetch(`http://localhost:5000/selected-users`, {
+      await fetch(`https://realtime-chta-app-backend.vercel.app/selected-users`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -211,7 +211,7 @@ const LeftSide = ({
           <ListItemIcon>
             <Avatar
               alt={user?.username}
-              src={`http://localhost:5000/${user.image}`}
+              src={`https://realtime-chta-app-backend.vercel.app/${user.image}`}
             />
           </ListItemIcon>
           <ListItemText
@@ -283,7 +283,7 @@ const LeftSide = ({
                 <ListItemIcon>
                   <Avatar
                     alt={user.username}
-                    src={`http://localhost:5000/${user.image}`}
+                    src={`https://realtime-chta-app-backend.vercel.app/${user.image}`}
                   />
                 </ListItemIcon>
                 <ListItemText
@@ -348,7 +348,7 @@ const LeftSide = ({
                 <ListItemIcon>
                   <Avatar
                     alt={user.username}
-                    src={`http://localhost:5000/${user.image}`}
+                    src={`https://realtime-chta-app-backend.vercel.app/${user.image}`}
                   />
                 </ListItemIcon>
                 <ListItemText primary={user.username} />

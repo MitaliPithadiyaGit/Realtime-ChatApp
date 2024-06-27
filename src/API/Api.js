@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000' ;
+const API_URL = 'https://realtime-chta-app-backend.vercel.app' ;
 export const registerUser = async (userData) => {
     try {
       const response = await axios.post(`${API_URL}/register`, userData);
