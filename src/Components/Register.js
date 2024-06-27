@@ -29,40 +29,77 @@ const Register = () => {
 
   const { setUser } = useContext(AuthContext);
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
+  // const handleSignUp = async (e) => {
+  //   e.preventDefault();
 
+  //   try {
+  //     const formDataToSend = new FormData(); // Create a new FormData instance
+  //     formDataToSend.append("username", username);
+  //     formDataToSend.append("email", email);
+  //     formDataToSend.append("password", password);
+
+  //     const response = await registerUser(formDataToSend);
+
+  //     if (response.data.token) {
+  //       localStorage.setItem("token", response.data.token);
+  //       localStorage.setItem("userId", response.data.id);
+  //       // Store user ID in localStorage
+  //       const id = response.data.id;
+  //       const userData = await getUser();
+  //       setUser(
+  //         userData
+  //         // image: URL.createObjectURL(image)
+  //       );
+  //       NotificationManager.success("User registered successfully!", "Success");
+  //       navigate(`/chat-dashboard/${id}`); // Redirect to ChatDashboard
+  //     }
+
+  //     console.log(response);
+  //     return response;
+  //   } catch (error) {
+  //     const errorMessage =
+  //       error.response?.data?.message || "Failed to register user";
+  //     NotificationManager.error(errorMessage, "Error");
+  //     throw new Error("Failed to register user");
+  //   }
+  // };
+
+  const handleSignUp = async () => {
     try {
-      const formDataToSend = new FormData(); // Create a new FormData instance
-      formDataToSend.append("username", username);
-      formDataToSend.append("email", email);
-      formDataToSend.append("password", password);
-
-      const response = await registerUser(formDataToSend);
-
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("userId", response.data.id);
-        // Store user ID in localStorage
-        const id = response.data.id;
-        const userData = await getUser();
-        setUser(
-          userData
-          // image: URL.createObjectURL(image)
-        );
+      const formDataForUpload = new FormData();
+      formDataForUpload.append('username', formData.username);
+      formDataForUpload.append('email', formData.email);
+      formDataForUpload.append('password', formData.password);
+  
+      const response = await axios.post('https://realtime-chta-app-backend.vercel.app', formDataForUpload);
+  
+      if (response.status === 200) {
+        console.log('SignUp Successful:', response.data);
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("userId", response.data.id);
+          // Store user ID in localStorage
+          const id = response.data.id;
+          const userData = await getUser();
+          setUser(
+            userData
+            // image: URL.createObjectURL(image)
+          );
         NotificationManager.success("User registered successfully!", "Success");
-        navigate(`/chat-dashboard/${id}`); // Redirect to ChatDashboard
+        navigate(`/chat-dashboard/${id}`);
+      } else {
+        console.error('Signup Failed:', response.data);
+        NotificationManager.error('Sign Up Failed', 'Error');
       }
-
-      console.log(response);
-      return response;
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Failed to register user";
-      NotificationManager.error(errorMessage, "Error");
-      throw new Error("Failed to register user");
-    }
-  };
+    } 
+  }
+    catch (error) {
+      console.error('Error during signup:', error.message, error.response?.data);
+      NotificationManager.error('Error during sign up', 'Error');
+  }
+}
+  
+  
 
   return (
     <Container maxWidth="sm" sx={{ padding: 3, marginTop: 10 }}>
