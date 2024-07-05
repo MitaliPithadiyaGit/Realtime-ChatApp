@@ -55,31 +55,30 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
     }
   }, [receiverId, token, userId]);
 
-useEffect(() => {
+  useEffect(() => {
     const connectWebSocket = () => {
-      const wsUrl =
-         `wss://realtime-chatapp-backend.vercel.app?userId=${userId}` 
-        
-
+      const wsUrl = `wss://realtime-chta-app-backend.vercel.app/ws?userId=${userId}`;
+      // Replace 'ws' with 'wss' for secure WebSocket connection
+  
       ws.current = new WebSocket(wsUrl);
       let retryCount = 0;
-
+  
       ws.current.onopen = () => {
         console.log("WebSocket connected");
         retryCount = 0; // Reset the retry count on successful connection
       };
-
+  
       ws.current.onmessage = (event) => {
         try {
           console.log("Message received from WebSocket:", event.data);
           const { sender, message, timestamp } = JSON.parse(event.data);
           const receivedTimestamp = new Date().toISOString();
-
+  
           setMessages((prevMessages) => [
             ...prevMessages,
             { sender, message, timestamp: receivedTimestamp },
           ]);
-
+  
           setSelectedUsers((prevUsers) =>
             prevUsers.map((user) =>
               user._id === sender
@@ -91,23 +90,23 @@ useEffect(() => {
           console.error("Error parsing WebSocket message:", error);
         }
       };
-
+  
       ws.current.onclose = () => {
         console.log("WebSocket disconnected");
         const retryInterval = Math.min(10000, 1000 * Math.pow(2, retryCount));
         setTimeout(connectWebSocket, retryInterval);
         retryCount += 1;
       };
-
+  
       ws.current.onerror = (error) => {
         console.error("WebSocket error:", error);
       };
     };
-
+  
     if (userId) {
       connectWebSocket();
     }
-
+  
     return () => {
       if (ws.current) {
         ws.current.close();
