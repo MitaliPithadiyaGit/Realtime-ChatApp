@@ -58,55 +58,42 @@ const RightSide = ({ selectedUser, setSelectedUser, setSelectedUsers }) => {
   useEffect(() => {
     const connectWebSocket = () => {
       const wsUrl = `wss://realtime-chta-app-backend.vercel.app/ws?userId=${userId}`;
-      // Replace 'ws' with 'wss' for secure WebSocket connection
-  
+      
       ws.current = new WebSocket(wsUrl);
-      let retryCount = 0;
-  
+
       ws.current.onopen = () => {
         console.log("WebSocket connected");
-        retryCount = 0; // Reset the retry count on successful connection
       };
-  
+
       ws.current.onmessage = (event) => {
         try {
           console.log("Message received from WebSocket:", event.data);
           const { sender, message, timestamp } = JSON.parse(event.data);
-          const receivedTimestamp = new Date().toISOString();
-  
-          setMessages((prevMessages) => [
+          
+          // Update messages state or do other handling
+          setMessages(prevMessages => [
             ...prevMessages,
-            { sender, message, timestamp: receivedTimestamp },
+            { sender, message, timestamp }
           ]);
-  
-          setSelectedUsers((prevUsers) =>
-            prevUsers.map((user) =>
-              user._id === sender
-                ? { ...user, lastMessage: { sender, message, timestamp } }
-                : user
-            )
-          );
         } catch (error) {
           console.error("Error parsing WebSocket message:", error);
         }
       };
-  
+
       ws.current.onclose = () => {
         console.log("WebSocket disconnected");
-        const retryInterval = Math.min(10000, 1000 * Math.pow(2, retryCount));
-        setTimeout(connectWebSocket, retryInterval);
-        retryCount += 1;
+        // Optionally handle reconnection logic here
       };
-  
+
       ws.current.onerror = (error) => {
         console.error("WebSocket error:", error);
       };
     };
-  
+
     if (userId) {
       connectWebSocket();
     }
-  
+
     return () => {
       if (ws.current) {
         ws.current.close();
